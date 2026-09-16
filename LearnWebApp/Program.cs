@@ -17,6 +17,20 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddHttpLogging();
 
+builder.Services.AddMvc();
+
+builder.Services.AddCors(option =>
+{
+    option.AddPolicy("ReactPolicy", policy =>
+    {
+        policy
+           .AllowAnyOrigin()
+           .AllowAnyHeader()
+           .AllowAnyMethod();
+    });
+});
+
+
 #region UserServicesBind
 builder.Services
     .AddScoped<UserManager<AppUser>>();
@@ -62,6 +76,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseCors("ReactPolicy");
 app.UseHttpLogging();
 app.UseHttpsRedirection();
 app.UseAuthorization();

@@ -1,0 +1,45 @@
+﻿@page
+@model LearnWebApp.Views.Home.IndexModel
+<!DOCTYPE html>
+<h1>Привет, мир!</h1>
+<b id="message"></b>
+<ul>
+    <li> @Html.ActionLink("Профиль", "Profile", "User") </li>
+    <li> @Html.ActionLink("Зарегестрироваться", "Register", "User")</li>
+    <li> @Html.ActionLink("Войти", "Login", "User")</li>
+</ul>
+
+<script>
+    async function fetchUserData()
+    {
+        let token = localStorage.getItem("TokenJWT");
+        if(!token)
+        {
+            return false;
+        }
+        const res = await fetch('@Url.Action(action: "GetProfile", controller: "Users")', {
+            headers: {
+                'Authorization': 'Bearer ${token}'
+            }
+        });
+        if(!res.ok){
+            return false;
+        }
+        return true;
+    }
+
+    async function updateMessage(){
+        let messBox = document.getElementById("message");
+        let res = await fetchUserData();
+        if(res)
+        {
+            messBox.textContent = "YOU ARE LOGGIN";
+        }
+        else
+        {
+            messBox.textContent = "YOU ARE NOT LOGGIN";
+        }
+    }
+
+    updateMessage();
+</script>
